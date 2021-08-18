@@ -1,10 +1,19 @@
 local gas = dofile("Mods/FluidMod/Lua/gasses.lua")
 local fluidSimulation = dofile("Mods/FluidMod/Lua/fluid_simulation.lua")
 
-gas.DefineGas("oxygen")
 gas.DefineGas("weldingFuel")
+gas.DefineGas("oxygen")
 
 fluidSimulation.SetGasses(gas)
+
+local burnPrefab
+
+for k, v in pairs(AfflictionPrefab.ListArray) do
+    if v.name == "Burn" then
+       burnPrefab = v
+       break
+    end
+end
 
 local oxygenUpdateTimer = 0
 Hook.Add("think", "fluidmod", function()
@@ -19,19 +28,19 @@ Hook.Add("think", "fluidmod", function()
             end
         end
 
---[[         for k, char in pairs(Character.CharacterList) do
+        for k, char in pairs(Character.CharacterList) do
             if char.CurrentHull then
-                local temp = GetTemperature(char.CurrentHull)
+                local temp = gas.GetTemperature(char.CurrentHull)
                 if temp > 320 then
                     local damage = (temp - 310)/2000
                     for k, limb in pairs(char.AnimController.Limbs) do
                         char.CharacterHealth.ApplyAffliction(limb, burnPrefab.Instantiate(damage))
                     end
                 elseif temp < 283 then
-                    local funny = "joebiden"
+
                 end
             end 
-        end ]]
+        end 
 
         oxygenUpdateTimer = Timer.GetTime() + 0.1 -- updates run at 10 times a second
     end

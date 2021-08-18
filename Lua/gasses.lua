@@ -1,15 +1,17 @@
 local gasses = {}
 
+local normalTemperature = 300
+
 gasses.listGasses = {}
 gasses.gasHullStorage = {}
 gasses.temperatureHullStorage = {}
 
 gasses.GetTemperature = function (hull)
-    return gasses.temperatureHullStorage[hull] or 0
+    return gasses.temperatureHullStorage[hull] or normalTemperature
 end
 
 gasses.AddTemperature = function (hull, amount)
-    gasses.temperatureHullStorage[hull] = (gasses.temperatureHullStorage[hull] or 0) + amount
+    gasses.temperatureHullStorage[hull] = (gasses.temperatureHullStorage[hull] or normalTemperature) + amount
 end
 
 gasses.SetTemperature = function (hull, amount)
