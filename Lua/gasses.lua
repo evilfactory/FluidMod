@@ -1,17 +1,17 @@
 local gasses = {}
 
-local normalTemperature = 300
+gasses.normalTemperature = 300
 
 gasses.listGasses = {}
 gasses.gasHullStorage = {}
 gasses.temperatureHullStorage = {}
 
 gasses.GetTemperature = function (hull)
-    return gasses.temperatureHullStorage[hull] or normalTemperature
+    return gasses.temperatureHullStorage[hull] or gasses.normalTemperature
 end
 
 gasses.AddTemperature = function (hull, amount)
-    gasses.temperatureHullStorage[hull] = (gasses.temperatureHullStorage[hull] or normalTemperature) + amount
+    gasses.temperatureHullStorage[hull] = (gasses.temperatureHullStorage[hull] or gasses.normalTemperature) + amount
 end
 
 gasses.SetTemperature = function (hull, amount)
@@ -44,6 +44,15 @@ gasses.GetGas = function (hull, gasname)
     end
 
     return gasses.gasHullStorage[hull][gasname] or 0
+end
+
+gasses.GetTotalMoles = function (hull)
+    local sum = 0
+    for _, gasName in pairs(gasses.listGasses) do
+        sum = sum + gasses.GetGas(hull, gasName)
+    end
+
+    return sum
 end
 
 return gasses

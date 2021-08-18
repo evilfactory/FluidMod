@@ -75,8 +75,8 @@ fluidSimulation.Simulate = function (gap, hull1, hull2)
 
         deltaGas = mathUtils.clamp(deltaGas, -gap.Size * gasDistributionSpeedConstant, gap.Size * gasDistributionSpeedConstant)
 
-        local pressure1 = (gas.GetGas(hull1, gasName) * 813 * gas.GetTemperature(hull1))/hull1.Volume
-        local pressure2 = (gas.GetGas(hull2, gasName) * 813 * gas.GetTemperature(hull2))/hull2.Volume
+        local pressure1 = mathUtils.calculatePressure(hull1, gas, gasName)
+        local pressure2 = mathUtils.calculatePressure(hull2, gas, gasName)
         local pressure = pressure1 - pressure2
         local stun = math.abs(pressure/813)
 

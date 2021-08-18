@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Afflictions>
-
     <Affliction
-    name="High Pressure g"
+    name="High Pressure"
     identifier="highpressure"
     description=""
     type="pressure"
@@ -13,17 +12,60 @@
 
     <Effect minstrength="0" maxstrength="100"
       minscreendistort="0.0"
-      maxscreendistort="0.0"
+      maxscreendistort="1.0"
       minscreenblur="0.0"
-      maxscreenblur="0.0"
+      maxscreenblur="5.0"
       minradialdistort="0.0"
-      maxradialdistort="0.0"
+      maxradialdistort="5.0"
       minchromaticaberration="0.0"
-      maxchromaticaberration="0.0"
+      maxchromaticaberration="5.0"
       >
     </Effect>
 
-    <icon texture="Mods/Advanced Medicine/Images/AfflictionIconAtlas.png" sourcerect="0,133,128,128" color="0,255,0,255" origin="0,0"/>
-  </Affliction>
+
+    <icon texture="Content/UI/MainIconsAtlas.png" sourcerect="768,768,128,128" color="143,111,160,255" origin="0,0"/>
+</Affliction>
+
+<Afflictions>
+    <Affliction
+    name="Hypothermia"
+    identifier="hypothermia"
+    description=""
+    type="damage"
+    limbspecific="false"
+    indicatorlimb="Torso"
+    showiconthreshold="0"
+    maxstrength="100">
+
+    <Effect minstrength="0" maxstrength="35"
+      minscreendistort="0.0"
+      maxscreendistort="1.0"
+      minscreenblur="0.0"
+      maxscreenblur="0.5"
+      minradialdistort="0.0"
+      maxradialdistort="1.0"
+      minchromaticaberration="0.0"
+      maxchromaticaberration="1.0"
+      >
+    </Effect>
+
+    <Effect minstrength="35" maxstrength="100"
+      minscreendistort="0.0"
+      maxscreendistort="2.0"
+      minscreenblur="0.0"
+      maxscreenblur="3"
+      minradialdistort="0.0"
+      maxradialdistort="2.0"
+      minchromaticaberration="0.0"
+      maxchromaticaberration="2.0"
+      >
+     <StatusEffect target="Character">
+        <Affliction identifier="hypotension" amount="0.5"/>
+     </StatusEffect>
+    </Effect>
+
+
+    <icon texture="Content/UI/MainIconsAtlas.png" sourcerect="768,768,128,128" color="143,111,160,255" origin="0,0"/>
+</Affliction>
 
 </Afflictions>

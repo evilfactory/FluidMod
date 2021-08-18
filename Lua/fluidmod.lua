@@ -1,5 +1,6 @@
 local gas = dofile("Mods/FluidMod/Lua/gasses.lua")
 local fluidSimulation = dofile("Mods/FluidMod/Lua/fluid_simulation.lua")
+local mathUtils = dofile("Mods/FluidMod/Lua/math_utils.lua")
 
 gas.DefineGas("weldingFuel")
 gas.DefineGas("oxygen")
@@ -7,11 +8,20 @@ gas.DefineGas("oxygen")
 fluidSimulation.SetGasses(gas)
 
 local burnPrefab
+local pressureDeathPrefab
+local highPressurePrefab
 
 for k, v in pairs(AfflictionPrefab.ListArray) do
     if v.name == "Burn" then
        burnPrefab = v
-       break
+    end
+
+    if v.name == "High Pressure" then
+        highPressurePrefab = v
+    end
+
+    if v.name == "Barotrauma" then
+        pressureDeathPrefab = v
     end
 end
 
@@ -29,15 +39,29 @@ Hook.Add("think", "fluidmod", function()
         end
 
         for k, char in pairs(Character.CharacterList) do
-            if char.CurrentHull then
+            if char.CurrentHull and char.CharacterHealth then
                 local temp = gas.GetTemperature(char.CurrentHull)
-                if temp > 320 then
-                    local damage = (temp - 310)/2000
+                if temp > gas.normalTemperature then
+                    local damage = (temp - (gas.normalTemperature-10))/2000
                     for k, limb in pairs(char.AnimController.Limbs) do
                         char.CharacterHealth.ApplyAffliction(limb, burnPrefab.Instantiate(damage))
                     end
-                elseif temp < 283 then
+                end
 
+                local pressure = mathUtils.calculateTotalPressure(char.CurrentHull, gas)
+                local amountPressure = char.CharacterHealth.GetAffliction("highpressure")
+
+                if amountPressure ~= nil then amountPressure = amountPressure.Strength 
+                else amountPressure = 0 end
+
+                if pressure > math.abs(char.PressureProtection) then
+                    char.CharacterHealth.ApplyAffliction(char.AnimController.MainLimb, highPressurePrefab.Instantiate(1))
+                    
+                    if  amountPressure > 95 then 
+                        char.CharacterHealth.ApplyAffliction(char.AnimController.MainLimb, pressureDeathPrefab.Instantiate(1))
+                    end
+                elseif amountPressure > 0 then
+                    char.CharacterHealth.ApplyAffliction(char.AnimController.MainLimb, highPressurePrefab.Instantiate(-1))
                 end
             end 
         end 
