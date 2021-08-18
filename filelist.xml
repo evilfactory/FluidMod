@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<contentpackage name="FluidMod" path="Mods/FluidMod/filelist.xml" corepackage="false" gameversion="0.14.6.0">
+  <Afflictions file="Mods/FluidMod/afflictions.xml" />
+</contentpackage>
