@@ -2,14 +2,15 @@ local gas = dofile("Mods/FluidMod/Lua/gasses.lua")
 local fluidSimulation = dofile("Mods/FluidMod/Lua/fluid_simulation.lua")
 local mathUtils = dofile("Mods/FluidMod/Lua/math_utils.lua")
 
-gas.DefineGas("weldingFuel")
 gas.DefineGas("oxygen")
+gas.DefineGas("weldingFuel")
 
 fluidSimulation.SetGasses(gas)
 
 local burnPrefab
 local pressureDeathPrefab
 local highPressurePrefab
+local hypothermiaPrefab
 
 for k, v in pairs(AfflictionPrefab.ListArray) do
     if v.name == "Burn" then
@@ -23,10 +24,28 @@ for k, v in pairs(AfflictionPrefab.ListArray) do
     if v.name == "Barotrauma" then
         pressureDeathPrefab = v
     end
+
+    if v.name == "Hypothermia" then
+        hypothermiaPrefab = v
+    end
 end
 
+local count = 0
+local time = 0
+
+
 local oxygenUpdateTimer = 0
+local afflictionUpdateTimer = 0
 Hook.Add("think", "fluidmod", function()
+    count = count + 1
+
+    if Timer.GetTime() > time then
+        print(count)
+
+        time = Timer.GetTime() + 1
+        count = 0
+    end
+
     if Timer.GetTime() > oxygenUpdateTimer then
 
         for k, v in pairs(Gap.GapList) do
@@ -38,14 +57,28 @@ Hook.Add("think", "fluidmod", function()
             end
         end
 
+        oxygenUpdateTimer = Timer.GetTime() + 0.1 -- updates run at 10 times a second
+    end
+
+    if Timer.GetTime() > afflictionUpdateTimer then
         for k, char in pairs(Character.CharacterList) do
             if char.CurrentHull and char.CharacterHealth then
                 local temp = gas.GetTemperature(char.CurrentHull)
-                if temp > gas.normalTemperature then
-                    local damage = (temp - (gas.normalTemperature-10))/2000
+
+                local amountHypothermia = char.CharacterHealth.GetAffliction("hypothermia")
+                if amountHypothermia ~= nil then amountHypothermia = amountHypothermia.Strength 
+                else amountHypothermia = 0 end
+
+                if temp > gas.maxNormalTemperature then
+                    local damage = (temp - (gas.maxNormalTemperature)) / 2000
                     for k, limb in pairs(char.AnimController.Limbs) do
                         char.CharacterHealth.ApplyAffliction(limb, burnPrefab.Instantiate(damage))
                     end
+                    char.CharacterHealth.ApplyAffliction(char.AnimController.MainLimb, hypothermiaPrefab.Instantiate(-1))
+                elseif temp < gas.minNormalTemperature then
+                    char.CharacterHealth.ApplyAffliction(char.AnimController.MainLimb, hypothermiaPrefab.Instantiate(0.25))
+                elseif amountHypothermia > 0 then
+                    char.CharacterHealth.ApplyAffliction(char.AnimController.MainLimb, hypothermiaPrefab.Instantiate(-0.25))
                 end
 
                 local pressure = mathUtils.calculateTotalPressure(char.CurrentHull, gas)
@@ -54,10 +87,10 @@ Hook.Add("think", "fluidmod", function()
                 if amountPressure ~= nil then amountPressure = amountPressure.Strength 
                 else amountPressure = 0 end
 
-                if pressure > math.abs(char.PressureProtection) then
+                if pressure > math.abs(char.PressureProtection) + 1000 then
                     char.CharacterHealth.ApplyAffliction(char.AnimController.MainLimb, highPressurePrefab.Instantiate(1))
                     
-                    if  amountPressure > 95 then 
+                    if amountPressure > 95 then 
                         char.CharacterHealth.ApplyAffliction(char.AnimController.MainLimb, pressureDeathPrefab.Instantiate(1))
                     end
                 elseif amountPressure > 0 then
@@ -66,7 +99,7 @@ Hook.Add("think", "fluidmod", function()
             end 
         end 
 
-        oxygenUpdateTimer = Timer.GetTime() + 0.1 -- updates run at 10 times a second
+        afflictionUpdateTimer = Timer.GetTime() + 0.25
     end
 end)
 
@@ -88,8 +121,16 @@ Hook.Add("chatMessage", "chatMessageDebug", function (msg, client)
         gas.AddGas(client.Character.CurrentHull, "weldingFuel", 2000)
     end
 
+    if msg == "!ad" then
+        gas.AddGas(client.Character.CurrentHull, "weldingFuel", 50)
+    end
+
     if msg == "!hot" then
         gas.AddTemperature(client.Character.CurrentHull, 50)
+    end
+
+    if msg == "!cold" then
+        gas.AddTemperature(client.Character.CurrentHull, -50)
     end
 
     if msg == "!pressure" then

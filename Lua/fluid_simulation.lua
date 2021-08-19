@@ -37,7 +37,7 @@ local function GetCharactersInHullFast(hull1, hull2)
 end
 
 local function ApplyPressure(chars, pressure, gap, mult)
-    local stun = math.abs(pressure/813)
+    local stun = math.abs(pressure / 813)
 
     if tostring(stun) == "NaN" then
         SafePrint("STUN VALUE WAS NIL! PRESSURE: " .. pressure)

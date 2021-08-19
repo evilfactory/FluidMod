@@ -1,6 +1,10 @@
 local gasses = {}
 
+local mathUtils = dofile("Mods/FluidMod/Lua/math_utils.lua")
+
 gasses.normalTemperature = 300
+gasses.maxNormalTemperature = 323
+gasses.minNormalTemperature = 270
 
 gasses.listGasses = {}
 gasses.gasHullStorage = {}
@@ -11,11 +15,11 @@ gasses.GetTemperature = function (hull)
 end
 
 gasses.AddTemperature = function (hull, amount)
-    gasses.temperatureHullStorage[hull] = (gasses.temperatureHullStorage[hull] or gasses.normalTemperature) + amount
+    gasses.temperatureHullStorage[hull] = gasses.GetTemperature(hull) + amount
 end
 
 gasses.SetTemperature = function (hull, amount)
-    gasses.temperatureHullStorage[hull] = amount
+    gasses.temperatureHullStorage[hull] = mathUtils.clamp(amount, 0, 99999999)
 end
 
 gasses.DefineGas = function (gasname)

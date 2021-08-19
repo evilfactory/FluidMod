@@ -22,18 +22,17 @@
       >
     </Effect>
 
-
     <icon texture="Content/UI/MainIconsAtlas.png" sourcerect="768,768,128,128" color="143,111,160,255" origin="0,0"/>
+
 </Affliction>
 
-<Afflictions>
     <Affliction
     name="Hypothermia"
     identifier="hypothermia"
     description=""
     type="damage"
     limbspecific="false"
-    indicatorlimb="Torso"
+    indicatorlimb="Head"
     showiconthreshold="0"
     maxstrength="100">
 
@@ -53,15 +52,16 @@
       minscreendistort="0.0"
       maxscreendistort="2.0"
       minscreenblur="0.0"
-      maxscreenblur="3"
+      maxscreenblur="2"
       minradialdistort="0.0"
       maxradialdistort="2.0"
       minchromaticaberration="0.0"
       maxchromaticaberration="2.0"
       >
-     <StatusEffect target="Character">
-        <Affliction identifier="hypotension" amount="0.5"/>
-     </StatusEffect>
+
+    <StatusEffect target="Character">
+        <Affliction identifier="hypotension" amount="1"/>
+    </StatusEffect>
     </Effect>
 
 
