@@ -30,21 +30,9 @@ for k, v in pairs(AfflictionPrefab.ListArray) do
     end
 end
 
-local count = 0
-local time = 0
-
-
 local oxygenUpdateTimer = 0
 local afflictionUpdateTimer = 0
 Hook.Add("think", "fluidmod", function()
-    count = count + 1
-
-    if Timer.GetTime() > time then
-        print(count)
-
-        time = Timer.GetTime() + 1
-        count = 0
-    end
 
     if Timer.GetTime() > oxygenUpdateTimer then
 
